@@ -17,9 +17,10 @@
   display: flex;
 }
 
-.store{
+.store {
   display: flex;
-flex-direction: column;}
+  flex-direction: column;
+}
 
 .checkouts {
   display: flex;
@@ -27,14 +28,11 @@ flex-direction: column;}
   gap: 10px;
 }
 
-.checkout{
-    border: solid 1px black;
-
+.checkout {
+  border: solid 1px black;
 }
 
-.customer{
-  border: solid 1px black;
-  border-radius: 50%;
+.customer {
   width: 20px;
   text-align: center;
 }
