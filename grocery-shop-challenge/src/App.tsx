@@ -61,7 +61,7 @@ function App() {
   };
 
   // Updates `userInput` state based on the form input field.
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserInput(e.target.valueAsNumber || 1);
   };
 
