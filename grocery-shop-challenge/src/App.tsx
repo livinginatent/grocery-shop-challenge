@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
+  // Static array of checkout names.
   const checkouts = [
     "Checkout 1",
     "Checkout 2",
@@ -10,43 +11,47 @@ function App() {
     "Checkout 5",
   ];
 
+  // State to track user input, initialized to 0.
   const [userInput, setUserInput] = useState<number>(0);
 
-  //TODO: For each checkout, generate an array of random length, fill with random numeric values
-
+  // Function to generate an array of random length filled with random numeric values.
   const randomItems = () => {
-    const length = Math.floor(Math.random() * 5 + 1);
-    return Array.from({ length: length }, () =>
-      Math.floor(Math.random() * 7 + 1)
+    const length = Math.floor(Math.random() * 5 + 1); // Random length between 1 and 5.
+    return Array.from(
+      { length: length },
+      () => Math.floor(Math.random() * 7 + 1) // Each item is a random number between 1 and 7.
     );
   };
 
+  // State to track items in each checkout, initialized with random items for each checkout.
   const [randomCheckoutItems, setRandomCheckoutItems] = useState(() =>
     checkouts.map(() => randomItems())
   );
 
+  // Handles form submission.
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    //TODO: Track the sum of items for each corresponding Checkout
+    // Determine the checkout with the least sum of items.
     let leastItems = Infinity;
     let leastCheckoutIndex = -1;
     for (let i = 0; i < randomCheckoutItems.length; i++) {
       const itemSum = randomCheckoutItems[i].reduce(
         (acc, curr) => acc + curr,
-        0
+        0 // Calculate sum of items for each checkout.
       );
       if (itemSum < leastItems) {
         leastItems = itemSum;
-        leastCheckoutIndex = i;
+        leastCheckoutIndex = i; // Update index of checkout with least items.
       }
     }
 
+    // Update the state to add the user input to the checkout with the least items.
     if (leastCheckoutIndex !== -1) {
       setRandomCheckoutItems((prev) =>
         prev.map((line, index) => {
           if (leastCheckoutIndex === index) {
-            return [...line, userInput];
+            return [...line, userInput]; // Add userInput to the chosen checkout.
           } else {
             return line;
           }
@@ -55,20 +60,28 @@ function App() {
     }
   };
 
+  // Updates `userInput` state based on the form input field.
   const onChange = (e) => {
-    setUserInput(e.target.valueAsNumber || 0);
+    setUserInput(e.target.valueAsNumber || 1);
   };
 
-  //TODO: for each item in each checkout, decrease the values by 1 each 1 second
-
+  // useEffect hook to decrease the value of each item in each checkout by 1 every second.
   useEffect(() => {
     const interval = setInterval(() => {
-      setRandomCheckoutItems((prevItems) => ([prevItems[0]-1,prevItems.slice(1)]));
+      setRandomCheckoutItems((prevItems) => {
+        return prevItems.map((checkoutItems) => {
+          const updatedItems = [
+            ...(checkoutItems[0] > 0
+              ? [checkoutItems[0] - 1]
+              : [checkoutItems[0]]),
+            ...checkoutItems.slice(1),
+          ].filter((value) => value > 0); // Filter out items with value > 0.
+          return updatedItems;
+        });
+      });
     }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-    // Since the effect does not depend on changing values but just sets up an interval, no dependencies are needed here.
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount.
   }, []);
 
   return (
@@ -97,9 +110,10 @@ function App() {
                     flexDirection: "column",
                   }}
                 >
+                  {/* Display items for each checkout */}
                   <div className="customer">
-                    {randomCheckoutItems[i].map((item, i) => (
-                      <p key={i}>{item}</p>
+                    {randomCheckoutItems[i].map((item, index) => (
+                      <p key={index}>{item}</p>
                     ))}
                   </div>
                 </div>
